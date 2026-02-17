@@ -4,18 +4,23 @@ import LandingPage from "./pages/LandingPage"
 import SignupPage from './pages/SignupPage'
 import FeedPage from './pages/FeedPage'
 
+import { useEffect } from "react";
+import { supabase } from "./lib/supabaseClient";
+
 
 export default function App() {
-  // const [isAuthed, setIsAuthed] = useState(false)
+  useEffect(() => {
+    async function test() {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*");
 
-  // return isAuthed ? (
-  //   <FeedPage onLogout={() => setIsAuthed(false)} />
-  // ) : (
-  //   <LandingPage
-  //     onLoginClick={() => setIsAuthed(true)}
-  //     onSignupClick={() => setIsAuthed(true)}
-  //   />
-  // )
+      console.log("DATA:", data);
+      console.log("ERROR:", error);
+    }
+
+    test();
+  }, []);
 
   // return <SignupPage/>
   return <FeedPage/>
