@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { MessageCircle, Shield, Sparkles, Users } from "lucide-react"
+import { SignupForm } from "@/components/signup-form"
 
 
 // reusable Feature component:
@@ -28,7 +29,7 @@ const Feature = ({icon, title, desc}) => {
 export default function LandingPage() {
   return (
     <>
-        
+        <SignupForm></SignupForm>
 
     </>
   )

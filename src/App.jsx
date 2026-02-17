@@ -16,7 +16,7 @@ export default function App() {
   // )
 
   return <LandingPage
-      onLoginClick={() => setIsAuthed(true)}
-      onSignupClick={() => setIsAuthed(true)}
+      onLoginClick={() => {}}
+      onSignupClick={() => {}}
     />
 }
