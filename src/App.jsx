@@ -17,6 +17,15 @@ export default function App() {
   // if an already logged-in user opens the website, they momentarily see
   // the loginpage before seeing the feedpage
 
+  async function onLogout() {
+    const {data, error} = await supabase.auth.signOut();
+    if (error) {
+      console.log("Logout error", error)
+    }
+
+    setUser(null)
+  }
+
   useEffect(() => {
     async function test() {
       const { data, error } = await supabase
@@ -42,7 +51,7 @@ export default function App() {
   if (!finishedProcessingAuth) {
     return <LoadingPage/>
   }
-  return user ? <FeedPage/> : <LoginPage/>
+  return user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>
   // return <SignupPage/>
   // return <FeedPage/>
 }
