@@ -7,9 +7,16 @@ import FeedPage from './pages/FeedPage'
 import { useEffect } from "react";
 import { supabase } from "./lib/supabaseClient";
 import LoginPage from './pages/LoginPage'
+import LoadingPage from './pages/LoadingPage'
 
 
 export default function App() {
+  const [user, setUser] = useState(null);
+  const [finishedProcessingAuth, setFinishedProcessingAuth] = useState(false);
+  // finishedProcessingAuth is important to prevent the "flash of incorrect UI"
+  // if an already logged-in user opens the website, they momentarily see
+  // the loginpage before seeing the feedpage
+
   useEffect(() => {
     async function test() {
       const { data, error } = await supabase
@@ -24,13 +31,18 @@ export default function App() {
       const {data, error} = await supabase.auth.getUser();
       console.log("User", data.user)
       console.log("Error", error)
+      setUser(data.user)
+      setFinishedProcessingAuth(true);
     }
 
     test();
     getUserFromAuth();
   }, []);
 
-  return <LoginPage/>
+  if (!finishedProcessingAuth) {
+    return <LoadingPage/>
+  }
+  return user ? <FeedPage/> : <LoginPage/>
   // return <SignupPage/>
   // return <FeedPage/>
 }
