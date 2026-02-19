@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
-import LandingPage from "./pages/LoginPage"
 import SignupPage from './pages/SignupPage'
 import FeedPage from './pages/FeedPage'
 
@@ -9,6 +8,7 @@ import { useEffect } from "react";
 import { supabase } from "./lib/supabaseClient";
 import LoginPage from './pages/LoginPage'
 import LoadingPage from './pages/LoadingPage'
+import ProfilePage from './pages/ProfilePage'
 
 
 export default function App() {
@@ -64,7 +64,9 @@ export default function App() {
       <Route path="/" element={user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>}/>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/signup" element={<SignupPage/>}/>
-      {/* <Route path="/loading" element={<LoadingPage/>}/> */}
+      <Route path="/loading" element={<LoadingPage/>}/>
+      <Route path="/profile" element={<ProfilePage/>}/>
+      
     </Routes>
   )
 

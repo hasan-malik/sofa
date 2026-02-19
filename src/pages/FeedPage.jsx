@@ -23,8 +23,11 @@ import {
   Settings,
   ThumbsUp,
   Users,
+  User
 } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
+
+import { useNavigate } from "react-router-dom"
 
 function initials(name) {
   return name
@@ -40,16 +43,19 @@ function formatTime(ts) {
   return ts
 }
 
-function NavItem({ icon: Icon, label, active }) {
-  return (
-    <Button
-      variant={active ? "secondary" : "ghost"}
-      className="w-full justify-start gap-2"
-    >
-      <Icon className="h-4 w-4" />
-      {label}
-    </Button>
-  )
+function NavItem({ icon: Icon, label, active, to }) {
+
+    const n = useNavigate();
+    return (
+        <Button
+        variant={active ? "secondary" : "ghost"}
+        className="w-full justify-start gap-2"
+        onClick={to ? () => {n(to)} : () => {}}
+        >
+        <Icon className="h-4 w-4" />
+        {label}
+        </Button>
+    )
 }
 
 async function createPost(postText) {
@@ -252,6 +258,7 @@ export default function FeedPage({ onLogout }) {
               <NavItem icon={Home} label="Home" active />
               <NavItem icon={Users} label="Friends" />
               <NavItem icon={MessageCircle} label="Messages" />
+              <NavItem icon={User} label="Profile" to="/profile"/>
               <NavItem icon={Settings} label="Settings" />
             </CardContent>
           </Card>
