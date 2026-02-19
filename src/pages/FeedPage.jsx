@@ -24,6 +24,7 @@ import {
   ThumbsUp,
   Users,
 } from "lucide-react"
+import { supabase } from "@/lib/supabaseClient"
 
 function initials(name) {
   return name
@@ -51,7 +52,27 @@ function NavItem({ icon: Icon, label, active }) {
   )
 }
 
+async function createPost(postText) {
+    const { data, error } = await supabase.auth.getUser();
+    
+    if (error) {
+        console.log("Post creation error:", error)
+    }
+
+    const user = data.user;
+
+    const { error: insertError } = await supabase.from("posts").insert({
+        content: postText,
+        user_id: user.id
+    })
+
+    if (insertError) {
+        console.log("Post insertion error to the Supabase DB:", insertError);
+    }
+}
+
 function PostCard({ post }) {
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -263,8 +284,8 @@ export default function FeedPage({ onLogout }) {
                   type="button"
                   disabled={!composerText.trim()}
                   onClick={() => {
-                    // UI-only for now
-                    setComposerText("")
+                    setComposerText("");
+                    createPost(composerText);
                   }}
                 >
                   Post
