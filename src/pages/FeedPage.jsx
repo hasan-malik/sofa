@@ -225,9 +225,9 @@ export default function FeedPage({ onLogout }) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="gap-2">
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback>HM</AvatarFallback>
+                    <AvatarFallback>FL</AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:block text-sm font-medium">Hasan</span>
+                  <span className="hidden sm:block text-sm font-medium">Name</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">

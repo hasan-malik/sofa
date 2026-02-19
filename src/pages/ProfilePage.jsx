@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,10 +25,10 @@ export default function ProfilePage({ onLogout }) {
     const n = useNavigate();
 
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const [triggerUseEffect, setTriggerUseEffect] = useState(true);
 
     const [user, setUser] = useState(null); // auth user
-    const [profile, setProfile] = useState(null); // row from public.profiles
+    const [profile, setProfile] = useState(null); // row from the public.profiles table in Supabase
     const [bioDraft, setBioDraft] = useState("");
 
     const displayName = useMemo(() => {
@@ -50,63 +50,56 @@ export default function ProfilePage({ onLogout }) {
         async function load() {
             setLoading(true);
 
-            const { data: authData, error: authErr } =
-                await supabase.auth.getUser();
-            if (authErr) console.log("getUser error:", authErr);
-
-            const authUser = authData?.user ?? null;
-            setUser(authUser);
-
-            if (!authUser) {
-                setProfile(null);
-                setBioDraft("");
-                setLoading(false);
-                return;
+            const { data, error } = await supabase.auth.getUser();
+            if (error) {
+                console.log("getUser error:", error);
             }
 
-            const { data: profData, error: profErr } = await supabase
+            const user = data.user;
+            setUser(user);
+
+            const { data: profileData, error: profileError } = await supabase
                 .from("profiles")
                 .select("id, bio, created_at")
-                .eq("id", authUser.id)
+                .eq("id", user.id)
                 .single();
 
-            if (profErr) {
-                console.log("profile fetch error:", profErr);
-                setProfile(null);
-                setBioDraft("");
+            if (profileError) {
+                console.log("profileError:", profileError);
             } else {
-                setProfile(profData);
-                setBioDraft(profData?.bio ?? "");
+                setProfile(profileData);
+                setBioDraft(profileData.bio);
             }
 
             setLoading(false);
+
+            console.log("RAN");
         }
 
         load();
-    }, []);
+    }, [triggerUseEffect]);
 
     async function saveBio() {
-        if (!user) return;
-        setSaving(true);
+        if (!user) {
+            console.error("Save bio error: user is not logged in");
+            return;
+        }
 
         const { error } = await supabase
             .from("profiles")
             .update({ bio: bioDraft })
             .eq("id", user.id);
 
-        if (error) console.log("bio update error:", error);
+        if (error) console.error("Bio updating error:", error);
 
-        // optimistic refresh of local profile state
-        setProfile((p) => (p ? { ...p, bio: bioDraft } : p));
-        setSaving(false);
+        setTriggerUseEffect(!triggerUseEffect);
     }
 
-    // Tiny, clean placeholders — later you’ll compute these for real
-    const counts = { posts: 0, followers: 0, following: 0 };
+    const counts = { posts: 0, followers: 0, following: 0 }; // hardcoded values
 
     return (
         <div className="min-h-screen bg-muted/30">
-            {/* Top bar */}
+            {/* Header bar */}
             <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur">
                 <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -121,7 +114,9 @@ export default function ProfilePage({ onLogout }) {
                             variant="ghost"
                             size="icon"
                             aria-label="Home"
-                            onClick={() => {n("/");}}
+                            onClick={() => {
+                                n("/");
+                            }}
                         >
                             <Home className="h-4 w-4" />
                         </Button>
@@ -133,7 +128,7 @@ export default function ProfilePage({ onLogout }) {
             </header>
 
             <main className="mx-auto max-w-4xl px-4 py-6 space-y-4">
-                {/* Profile header */}
+                {/* PROFILE */}
                 <Card>
                     <CardContent className="p-5">
                         {loading ? (
@@ -202,7 +197,7 @@ export default function ProfilePage({ onLogout }) {
                     </CardContent>
                 </Card>
 
-                {/* Bio */}
+                {/* BIO */}
                 <Card>
                     <CardHeader className="pb-3">
                         <div className="font-semibold">Bio</div>
@@ -227,19 +222,16 @@ export default function ProfilePage({ onLogout }) {
                                     <div className="text-xs text-muted-foreground">
                                         Saved bio:{" "}
                                         <span className="text-muted-foreground/80">
-                                            {profile?.bio ?? ""}
+                                            {profile?.bio}
                                         </span>
                                     </div>
 
                                     <Button
                                         type="button"
                                         onClick={saveBio}
-                                        disabled={
-                                            saving ||
-                                            bioDraft === (profile?.bio ?? "")
-                                        }
+                                        disabled={bioDraft === profile?.bio}
                                     >
-                                        {saving ? "Saving..." : "Save"}
+                                        {"Save"}
                                     </Button>
                                 </div>
                             </>
@@ -247,14 +239,14 @@ export default function ProfilePage({ onLogout }) {
                     </CardContent>
                 </Card>
 
-                {/* My posts (placeholder layout) */}
+                {/* POSTS */}
                 <Card>
                     <CardHeader className="pb-3">
                         <div className="font-semibold">My posts</div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <div className="text-sm text-muted-foreground">
-                            Placeholder. Next we’ll load your posts from
+                            Placeholder. In production, load your posts from
                             Supabase and render them here.
                         </div>
 
