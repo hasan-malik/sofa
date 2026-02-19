@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import SignupPage from './pages/SignupPage'
 import FeedPage from './pages/FeedPage'
@@ -61,7 +61,7 @@ export default function App() {
   // return <FeedPage/>
   return (
     <Routes>
-      <Route path="/" element={user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>}/>
+      <Route path="/" element={user ? <FeedPage onLogout={onLogout}/> : <Navigate to="/login"/>}/>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/signup" element={<SignupPage/>}/>
       <Route path="/loading" element={<LoadingPage/>}/>
