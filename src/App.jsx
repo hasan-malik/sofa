@@ -65,8 +65,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/signup" element={<SignupPage/>}/>
       <Route path="/loading" element={<LoadingPage/>}/>
-      <Route path="/profile" element={<ProfilePage/>}/>
-      
+      <Route path="/profile" element={user ? <ProfilePage onLogout={onLogout}/> : <Navigate to="/login"/>}/>
     </Routes>
   )
 
