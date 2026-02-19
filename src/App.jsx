@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import LandingPage from "./pages/LoginPage"
 import SignupPage from './pages/SignupPage'
@@ -51,7 +52,20 @@ export default function App() {
   if (!finishedProcessingAuth) {
     return <LoadingPage/>
   }
-  return user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>
+
+  // if (!user) {
+  //   return <LoginPage/>
+  // }
+  // return user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>
   // return <SignupPage/>
   // return <FeedPage/>
+  return (
+    <Routes>
+      <Route path="/" element={user ? <FeedPage onLogout={onLogout}/> : <LoginPage/>}/>
+      <Route path="/login" element={<LoginPage/>}/>
+      <Route path="/signup" element={<SignupPage/>}/>
+      {/* <Route path="/loading" element={<LoadingPage/>}/> */}
+    </Routes>
+  )
+
 }
